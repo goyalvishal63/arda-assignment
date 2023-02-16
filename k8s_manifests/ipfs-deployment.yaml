@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ipfs
+  name: ipfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipfs
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ipfs
+    spec:
+      containers:
+        - image: ipfs/go-ipfs:v0.10.0
+          name: ipfs
+          ports:
+            - containerPort: 5001
+          resources: {}
+          volumeMounts:
+            - mountPath: /data/ipfs
+              name: ipfs-claim
+      restartPolicy: Always
+      volumes:
+        - name: ipfs-claim
+          persistentVolumeClaim:
+            claimName: ipfs-claim
+status: {}

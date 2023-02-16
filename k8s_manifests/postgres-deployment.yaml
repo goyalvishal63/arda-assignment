@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - args:
+            - postgres
+            - -cshared_preload_libraries=pg_stat_statements
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+            - name: POSTGRES_DB
+              value: graph-node
+            - name: POSTGRES_INITDB_ARGS
+              value: -E UTF8 --locale=C
+            - name: POSTGRES_PASSWORD
+              value: let-me-in
+            - name: POSTGRES_USER
+              value: graph-node
+          image: postgres
+          name: postgres
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-claim
+      restartPolicy: Always
+      volumes:
+        - name: postgres-claim
+          persistentVolumeClaim:
+            claimName: postgres-claim
+status: {}

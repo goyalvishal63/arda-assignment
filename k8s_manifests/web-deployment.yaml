@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - env:
+            - name: GRAPH_LOG
+              value: info
+            - name: ethereum
+              value: mainnet:http://node:8545
+            - name: ipfs
+              value: ipfs:5001
+            - name: postgres_db
+              value: graph-node
+            - name: postgres_host
+              value: postgres
+            - name: postgres_pass
+              value: let-me-in
+            - name: postgres_user
+              value: graph-node
+            - name: RUST_BACKTRACE
+              value: "1"
+          image: goyalvishal63/graph-node:1.0
+          name: web
+          ports:
+            - containerPort: 8000
+            - containerPort: 8001
+            - containerPort: 8020
+            - containerPort: 8030
+            - containerPort: 8040
+          resources: {}
+      restartPolicy: Always
+status: {}
