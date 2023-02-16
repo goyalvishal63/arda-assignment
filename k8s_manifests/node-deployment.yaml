@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node
+  name: node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: node
+    spec:
+      containers:
+        - command:
+            - node
+            - /app/ganache-core.docker.cli.js
+            - --deterministic
+            - --db=/ganache_data
+            - --mnemonic
+            - minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef
+            - --networkId
+            - "5777"
+            - --hostname
+            - 0.0.0.0
+            - --debug
+          image: trufflesuite/ganache-cli:latest
+          name: node
+          ports:
+            - containerPort: 8545
+          resources: {}
+          volumeMounts:
+            - mountPath: /ganache_data
+              name: node-claim
+      restartPolicy: Always
+      volumes:
+        - name: node-claim
+          persistentVolumeClaim:
+            claimName: node-claim
+status: {}
